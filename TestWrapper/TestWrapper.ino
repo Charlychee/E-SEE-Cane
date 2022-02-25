@@ -1,7 +1,9 @@
 // Author: Charles Lee - ccl002@ucsd.edu
+
 #include "TFLWrapper.h"
 #include <Wire.h>
 #include "Timer.h"
+#include "DiffBuffer.h"
 
 #define TFL_TOP_ADDRESS 0x10
 #define TFL_BOT_ADDRESS 0x20
@@ -22,6 +24,9 @@
 TFLWrapper theTopTFL(TFL_TOP_ADDRESS);
 TFLWrapper theBotTFL(TFL_BOT_ADDRESS);
 
+DiffBuffer<50> TopBuffer(50);
+DiffBuffer<50> BotBuffer(50);
+
 void buzzMotor() {
   theTopTFL.checkData();
   theBotTFL.checkData();
@@ -34,6 +39,12 @@ void buzzMotor() {
   digitalWrite(BUZZ2, theBotTFL.getDist() < FAR ? HIGH : LOW);
   digitalWrite(BUZZ3, theTopTFL.getDist() < NEAR ? HIGH : LOW);
   digitalWrite(BUZZ4, theTopTFL.getDist() < FAR ? HIGH : LOW);
+
+  bool topCliff = TopBuffer.push(theTopTFL.getDist());
+  bool botCliff = BotBuffer.push(theBotTFL.getDist());
+  if(topCliff | botCliff) {
+    Serial.println("THERE IS A CLIFF!!! --------------------------------");
+  }
 }
 
 Timer buzzMotorTimer(100, &buzzMotor);
