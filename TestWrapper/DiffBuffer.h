@@ -1,4 +1,5 @@
 // Author: Charles Lee - ccl002@ucsd.edu
+// Provides a buffer service while alerting the client when pushed data is very different from items in the buffer.
 
 #ifndef DIFF_BUFFER_H
 #define DIFF_BUFFER_H

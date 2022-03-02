@@ -1,5 +1,5 @@
 // Author: Charles Lee - ccl002@ucsd.edu
-
+// Timer provides a synchronous way to run a given function
 #ifndef TIMER_H
 #define TIMER_H
 
@@ -9,6 +9,7 @@ class Timer {
     ~Timer();
 
     void run();
+    void runNow();
   
   private:
     unsigned long previous;

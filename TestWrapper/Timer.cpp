@@ -12,8 +12,14 @@ Timer::Timer(int interval, void (*function)()) {
 Timer::~Timer() {}
 
 void Timer::run() {
+  // Check if enough time as passed before running the function (Synchronous)
 	if (millis() - this->previous > this->theInterval) {
-		this->theFunction();
-		this->previous = millis();
+		this->runNow();
 	}
+}
+
+void Timer::runNow() {
+  // Run the function right now (Asynchronous)
+  this->theFunction();
+  this->previous = millis();
 }
