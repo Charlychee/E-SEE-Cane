@@ -8,14 +8,14 @@
 #define TFL_TOP_ADDRESS 0x10
 #define TFL_BOT_ADDRESS 0x20
 
-// red - pinky
-// grey - index
-// yellow - ring
-// orange - middle
-#define BUZZ1 4
-#define BUZZ2 5
-#define BUZZ3 6
-#define BUZZ4 7
+// pointer - yellow
+// middle - red
+// ring - gray
+// orange - pinky
+#define POINTER 4
+#define MIDDLE 5
+#define RING 6
+#define PINKY 7
 
 // Distance in 
 #define NEAR 50
@@ -63,10 +63,10 @@ Timer speakerToneTimer(2000, &speakerTone);
 
 void buzzMotor(int16_t topDist, int16_t botDist) {
   // Buzzes the motors based on the distance seen by sensors
-  digitalWrite(BUZZ1, botDist < NEAR ? HIGH : LOW);
-  digitalWrite(BUZZ2, botDist < FAR ? HIGH : LOW);
-  digitalWrite(BUZZ3, topDist < NEAR ? HIGH : LOW);
-  digitalWrite(BUZZ4, topDist < FAR ? HIGH : LOW);
+  digitalWrite(POINTER, botDist < NEAR ? HIGH : LOW);
+  digitalWrite(MIDDLE, botDist < FAR ? HIGH : LOW);
+  digitalWrite(RING, topDist < NEAR ? HIGH : LOW);
+  digitalWrite(PINKY, topDist < FAR ? HIGH : LOW);
 }
 
 void checkCliff() {
@@ -86,10 +86,10 @@ void setup() {
   Wire.begin();
 
   // Initialize buzz motors
-  pinMode(BUZZ1, OUTPUT);
-  pinMode(BUZZ2, OUTPUT);
-  pinMode(BUZZ3, OUTPUT);
-  pinMode(BUZZ4, OUTPUT);
+  pinMode(POINTER, OUTPUT);
+  pinMode(MIDDLE, OUTPUT);
+  pinMode(RING, OUTPUT);
+  pinMode(PINKY, OUTPUT);
 
   // Initialize speaker buzzer
   pinMode(BUZZER_PIN, OUTPUT);
