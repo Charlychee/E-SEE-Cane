@@ -5,8 +5,11 @@
 #include "Timer.h"
 #include "DiffBuffer.h"
 
+// TFL Sensors
 #define TFL_TOP_ADDRESS 0x10
 #define TFL_BOT_ADDRESS 0x20
+
+#define TFL_TOP_POWER 8
 
 // pointer - yellow
 // middle - red
@@ -81,9 +84,31 @@ void checkCliff() {
   }
 }
 
+void setupI2CAddresses() {
+  // Turn off top power
+  Serial.println("Turning off Top power...");
+  pinMode(TFL_TOP_POWER, OUTPUT);
+  digitalWrite(TFL_TOP_POWER, LOW);
+  
+
+  // Switch bot address
+  Serial.println("Switching Bot address...");
+  TFLI2C tflI2C;
+  tflI2C.Set_I2C_Addr(TFL_BOT_ADDRESS, TFL_TOP_ADDRESS);
+  Serial.println("Switched!");
+
+  // Turn back on top power
+  Serial.println("Turning back on Top power...");
+  digitalWrite(TFL_TOP_POWER, HIGH);
+}
+
 void setup() {
   Serial.begin(115200);
+  while(!Serial); // Waits for Serial to start before printing
+  
   Wire.begin();
+
+  setupI2CAddresses();
 
   // Initialize buzz motors
   pinMode(POINTER, OUTPUT);
