@@ -21,8 +21,7 @@
 #define PINKY 7
 
 // Distance thresholds in centimeters
-#define NEAR 50
-#define FAR 100
+#define DISTANCE 100
 
 // Cliff detection parameters
 #define CLIFF_THRESH 50
@@ -72,10 +71,10 @@ void buzzMotor(int16_t topDist, int16_t botDist) {
   // Buzzes the motors based on the distance seen by sensors
   // Pointer and middle for bottom sensor
   // Ring and pinky for top sensor
-  digitalWrite(POINTER, botDist < NEAR ? HIGH : LOW);
-  digitalWrite(MIDDLE, botDist < FAR ? HIGH : LOW);
-  digitalWrite(RING, topDist < NEAR ? HIGH : LOW);
-  digitalWrite(PINKY, topDist < FAR ? HIGH : LOW);
+  digitalWrite(POINTER, botDist < DISTANCE ? HIGH : LOW);
+  digitalWrite(MIDDLE, botDist < DISTANCE ? HIGH : LOW);
+  digitalWrite(RING, topDist < DISTANCE ? HIGH : LOW);
+  digitalWrite(PINKY, topDist < DISTANCE ? HIGH : LOW);
 }
 
 void checkCliff() {
