@@ -1,3 +1,6 @@
+// Author: Charles Lee - ccl002@ucsd.edu
+// Changes the address of the connected TF-Luna from the default 0x10 to tfAddr
+
 #include <Arduino.h>
 #include <Wire.h>
 #include <TFLI2C.h>  // TFLuna-I2C Library v.0.1.1
@@ -21,7 +24,8 @@ void setup()
     if(saveRes) Serial.println("Saved!");
     else Serial.println("Failed to save");
 
-    if(tflI2C.Soft_Reset(tfAddr)) Serial.println("Reseting...");
+    bool resetRes = tflI2C.Soft_Reset(tfAddr);
+    if(resetRes) Serial.println("Reseting...");
     else Serial.println("Failed to reset");
 }
 
