@@ -1,5 +1,6 @@
 // Author: Charles Lee - ccl002@ucsd.edu
-// Timer provides a synchronous way to run a given function
+// Timer provides a synchronous way to run a provided function
+
 #ifndef TIMER_H
 #define TIMER_H
 

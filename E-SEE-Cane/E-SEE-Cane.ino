@@ -1,7 +1,8 @@
 // Author: Charles Lee - ccl002@ucsd.edu
+// The main program for the E-SEE-Cane project
 
-#include "TFLWrapper.h"
 #include <Wire.h>
+#include "TFLWrapper.h"
 #include "Timer.h"
 #include "DiffBuffer.h"
 
@@ -9,8 +10,7 @@
 #define TFL_TOP_ADDRESS 0x10
 #define TFL_BOT_ADDRESS 0x20
 
-#define TFL_TOP_POWER 8
-
+// Buzzer Motor Pins
 // pointer - yellow
 // middle - red
 // ring - gray
@@ -20,30 +20,36 @@
 #define RING 6
 #define PINKY 7
 
-// Distance in 
+// Distance thresholds in centimeters
 #define NEAR 50
 #define FAR 100
 
+// Cliff detection parameters
 #define CLIFF_THRESH 50
 #define BUZZER_PIN 9
 
+// TF-Luna interface
 TFLWrapper theTopTFL(TFL_TOP_ADDRESS);
 TFLWrapper theBotTFL(TFL_BOT_ADDRESS);
 
+// Buffer for cliff detection
 DiffBuffer<50> TopBuffer(CLIFF_THRESH);
 DiffBuffer<50> BotBuffer(CLIFF_THRESH);
 
+// For buzzing the speaker on cliff detection
 bool buzzSpeaker = false;
 
 void processData() {
   // Retrieves data from sensors and push information to hardware
   theTopTFL.checkData();
   theBotTFL.checkData();
+  
   Serial.print("TOP: ");
   Serial.print(theTopTFL.getDist());
   Serial.print(", BOT: ");
   Serial.println(theBotTFL.getDist());
 
+  // Notify user based on data
   buzzMotor(theTopTFL.getDist(), theBotTFL.getDist());
   checkCliff();
 }
@@ -51,12 +57,10 @@ void processData() {
 void speakerTone() {
   // Buzzes the speaker tone if cliff detected, stops if not detected
   if (buzzSpeaker) {
-    Serial.println("Buzzing!");
     tone(BUZZER_PIN, 1000);
     buzzSpeaker = false;
   }
   else {
-    Serial.println("Stopping Buzz");
     noTone(BUZZER_PIN);
   }
 }
@@ -66,6 +70,8 @@ Timer speakerToneTimer(2000, &speakerTone);
 
 void buzzMotor(int16_t topDist, int16_t botDist) {
   // Buzzes the motors based on the distance seen by sensors
+  // Pointer and middle for bottom sensor
+  // Ring and pinky for top sensor
   digitalWrite(POINTER, botDist < NEAR ? HIGH : LOW);
   digitalWrite(MIDDLE, botDist < FAR ? HIGH : LOW);
   digitalWrite(RING, topDist < NEAR ? HIGH : LOW);
@@ -76,39 +82,20 @@ void checkCliff() {
   // Adds Distance data to DiffBuffer and checks if there's a cliff
   bool topCliff = TopBuffer.push(theTopTFL.getDist());
   bool botCliff = BotBuffer.push(theBotTFL.getDist());
+  
   if((topCliff || botCliff) && !buzzSpeaker) {
     // There is a cliff, start speakerTone
-    Serial.println("THERE IS A CLIFF!!! --------------------------------");
     buzzSpeaker = true;
     speakerToneTimer.runNow(); // Async run to instantly let user know
   }
 }
 
-void setupI2CAddresses() {
-  // Turn off top power
-  Serial.println("Turning off Top power...");
-  pinMode(TFL_TOP_POWER, OUTPUT);
-  digitalWrite(TFL_TOP_POWER, LOW);
-  
-
-  // Switch bot address
-  Serial.println("Switching Bot address...");
-  TFLI2C tflI2C;
-  tflI2C.Set_I2C_Addr(TFL_BOT_ADDRESS, TFL_TOP_ADDRESS);
-  Serial.println("Switched!");
-
-  // Turn back on top power
-  Serial.println("Turning back on Top power...");
-  digitalWrite(TFL_TOP_POWER, HIGH);
-}
-
 void setup() {
   Serial.begin(115200);
   while(!Serial); // Waits for Serial to start before printing
-  
-  Wire.begin();
 
-  setupI2CAddresses();
+  // Start reading I2C
+  Wire.begin();
 
   // Initialize buzz motors
   pinMode(POINTER, OUTPUT);
@@ -121,7 +108,7 @@ void setup() {
 }
 
 void loop() {
-  // Run synchronous functionsx
+  // Run synchronous functions
   processDataTimer.run();
   speakerToneTimer.run();
 }

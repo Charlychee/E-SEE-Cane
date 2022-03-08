@@ -1,5 +1,5 @@
 // Author: Charles Lee - ccl002@ucsd.edu
-// Abstracts the TF-Luna to allow for easier interfacing with multiple sensors
+// Provides an interface to the TF-Luna sensors to allow for easier interfacing with multiple sensors
 
 #ifndef TFLWrapper_H
 #define TFLWrapper_H
