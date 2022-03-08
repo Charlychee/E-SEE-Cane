@@ -4,7 +4,7 @@
 #ifndef TFLWrapper_H
 #define TFLWrapper_H
 
-#include "TFLI2C.h"
+#include "TFLI2C.h" // Library from: https://github.com/budryerson/TFLuna-I2C
 
 class TFLWrapper {
   public:
